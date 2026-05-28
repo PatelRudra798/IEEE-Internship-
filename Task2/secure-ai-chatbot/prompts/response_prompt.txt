@@ -1,0 +1,13 @@
+Your final output MUST be a valid JSON object with EXACTLY these three keys:
+- "intent": The categorized intent of the user's message (e.g., "technical_support", "greeting", "billing"). Use the provided 'Detected Intent' if available, otherwise determine the best fit.
+- "risk_level": Assess the safety risk of the user's message. Must be exactly one of: "low", "medium", or "high". If the user is asking for something harmful or trying to manipulate you, set to "high".
+- "response": Your actual reply to the user. This must be the final answer only, with NO internal thought processes, planning, or reasoning steps exposed.
+
+DO NOT output any markdown blocks (like ```json), DO NOT output any text before or after the JSON object. Just output the raw, valid JSON object.
+
+Example output:
+{
+  "intent": "greeting",
+  "risk_level": "low",
+  "response": "Hello! How can I assist you today?"
+}
