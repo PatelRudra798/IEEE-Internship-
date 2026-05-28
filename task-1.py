@@ -214,7 +214,6 @@ class BackgroundManager:
         hill2_color = (int(bot[0] * 0.56), int(bot[1] * 0.56), int(bot[2] * 0.56))
         self.draw_hills(screen, self.hill2_offset, 90, hill2_color, HEIGHT - 135, 40)
 
-
 class Cloud:
     """Soft aesthetic clouds drifting in the upper atmosphere."""
     def __init__(self):

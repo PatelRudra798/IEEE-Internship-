@@ -1,0 +1,11 @@
+Analyze the user's message and categorize their intent into exactly one of the following categories:
+- greeting
+- farewell
+- product_info
+- technical_support
+- billing
+- complaint
+- general_query
+- malicious_activity
+
+Use the context of the message to choose the most accurate category.
