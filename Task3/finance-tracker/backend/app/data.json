@@ -1,0 +1,54 @@
+{
+  "transactions": [
+    {
+      "id": "8c5a3eef-8ec6-407d-8934-af43ace31f43",
+      "type": "income",
+      "amount": 100.0,
+      "category": "Freelance",
+      "description": "side income",
+      "date": "2026-05-29T00:00:00.000Z",
+      "recurring": false,
+      "recurringPattern": null
+    },
+    {
+      "id": "985d890b-09c8-4272-9c53-128b1232280b",
+      "type": "income",
+      "amount": 25.0,
+      "category": "Gift",
+      "description": "side income",
+      "date": "2026-05-29T00:00:00.000Z",
+      "recurring": false,
+      "recurringPattern": null
+    },
+    {
+      "id": "0d2af9eb-bc68-47c8-bde8-8064f194e1e1",
+      "type": "expense",
+      "amount": 10.0,
+      "category": "Food",
+      "description": "pizza",
+      "date": "2026-05-29T00:00:00.000Z",
+      "recurring": false,
+      "recurringPattern": null
+    },
+    {
+      "id": "dc7d3bf7-5ecd-4a4a-a293-37d40e3bbbc3",
+      "type": "expense",
+      "amount": 5.0,
+      "category": "Food",
+      "description": "Burger",
+      "date": "2026-05-29T00:00:00.000Z",
+      "recurring": false,
+      "recurringPattern": null
+    }
+  ],
+  "budgets": [
+    {
+      "id": "1414180d-fe4e-47df-aeb5-038a4bbe3753",
+      "category": "Food",
+      "monthYear": "2026-05",
+      "limit": 100.0,
+      "alerts": true
+    }
+  ],
+  "goals": []
+}
