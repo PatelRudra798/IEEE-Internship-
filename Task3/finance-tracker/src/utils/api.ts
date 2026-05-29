@@ -3,7 +3,7 @@
  * Simple wrapper around fetch that includes the API key header.
  * Adjust BASE_URL as needed for development or production.
  */
-const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://finance-tracker-131m.onrender.com";
 
 export async function apiRequest<T>(
   endpoint: string,

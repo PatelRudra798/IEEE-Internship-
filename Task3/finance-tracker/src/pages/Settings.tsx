@@ -34,7 +34,7 @@ export default function Settings() {
   useEffect(() => {
     async function checkHealth() {
       try {
-        const res = await fetch('http://localhost:8000/health');
+        const res = await fetch('https://finance-tracker-131m.onrender.com/health');
         if (res.ok) {
           const data = await res.json();
           setBackendStatus('online');
