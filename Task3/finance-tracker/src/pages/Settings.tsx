@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useNotification } from '../context/NotificationContext';
+import { BASE_URL } from '../utils/api';
 import { 
   Sun, 
   Moon, 
@@ -34,7 +35,7 @@ export default function Settings() {
   useEffect(() => {
     async function checkHealth() {
       try {
-        const res = await fetch('http://localhost:8000/health');
+        const res = await fetch(`${BASE_URL}/health`);
         if (res.ok) {
           const data = await res.json();
           setBackendStatus('online');

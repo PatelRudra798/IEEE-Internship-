@@ -8,8 +8,7 @@ import {
   PiggyBank, 
   Target, 
   AlertTriangle, 
-  Calendar,
-  DollarSign
+  Calendar
 } from 'lucide-react';
 import { useTransactions } from '../context/TransactionContext';
 import { useBudgets } from '../context/BudgetContext';
