@@ -1,16 +1,6 @@
 {
   "transactions": [
     {
-      "id": "8c5a3eef-8ec6-407d-8934-af43ace31f43",
-      "type": "income",
-      "amount": 100.0,
-      "category": "Freelance",
-      "description": "side income",
-      "date": "2026-05-29T00:00:00.000Z",
-      "recurring": false,
-      "recurringPattern": null
-    },
-    {
       "id": "985d890b-09c8-4272-9c53-128b1232280b",
       "type": "income",
       "amount": 25.0,
