@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A premium chatbot interface simulating Google Gemini controls, showing real-time tokenized outputs, token counters, and parameter limits.">
+    <title>Gemini Tokenized Chatbot Studio</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <div class="logo-icon"></div>
+                <h1>Gemini Token Studio</h1>
+            </div>
+            <nav class="app-nav">
+                <button id="nav-chat-tab" class="nav-btn active" onclick="switchTab('chat')">Chat Studio</button>
+                <button id="nav-tokenizer-tab" class="nav-btn" onclick="switchTab('tokenizer')">Live Tokenizer</button>
+            </nav>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="app-workspace">
+            
+            <!-- Tab 1: Chat Studio -->
+            <section id="tab-chat" class="workspace-tab workspace-tabactive">
+                <!-- Sidebar Controls -->
+                <aside class="controls-sidebar">
+                    <div class="sidebar-section">
+                        <h2>Model Configurations</h2>
+                        <div class="control-group">
+                            <label for="model-select">Active Model</label>
+                            <select id="model-select">
+                                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                                <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h2>Generation Parameters</h2>
+                        
+                        <div class="control-group">
+                            <div class="label-header">
+                                <label for="temperature-slider">Temperature</label>
+                                <span id="temperature-value" class="param-value">0.70</span>
+                            </div>
+                            <input type="range" id="temperature-slider" min="0.0" max="2.0" step="0.05" value="0.70">
+                            <span class="range-hint">Creative (2.0) vs. Focused (0.0)</span>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="label-header">
+                                <label for="max-tokens-slider">
+                                    <input type="checkbox" id="enable-max-tokens" style="margin-right:6px; accent-color: var(--primary);">
+                                    Max Output Tokens
+                                </label>
+                                <span id="max-tokens-value" class="param-value" style="opacity:0.4;">off</span>
+                            </div>
+                            <input type="range" id="max-tokens-slider" min="10" max="2048" step="10" value="256" disabled style="opacity:0.3;">
+                            <span class="range-hint">Enable to enforce a token limit on output</span>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="label-header">
+                                <label for="top-p-slider">Top P (Nucleus)</label>
+                                <span id="top-p-value" class="param-value">0.95</span>
+                            </div>
+                            <input type="range" id="top-p-slider" min="0.0" max="1.0" step="0.05" value="0.95">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="label-header">
+                                <label for="top-k-slider">Top K</label>
+                                <span id="top-k-value" class="param-value">40</span>
+                            </div>
+                            <input type="range" id="top-k-slider" min="1" max="100" step="1" value="40">
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h2>Session Token Tracker</h2>
+                        <div class="tracker-stats">
+                            <div class="tracker-stat-item">
+                                <span class="stat-label">Prompt Tokens:</span>
+                                <span id="session-prompt-tokens" class="stat-num">0</span>
+                            </div>
+                            <div class="tracker-stat-item">
+                                <span class="stat-label">Response Tokens:</span>
+                                <span id="session-completion-tokens" class="stat-num">0</span>
+                            </div>
+                            <div class="tracker-stat-item highlight">
+                                <span class="stat-label">Total Session:</span>
+                                <span id="session-total-tokens" class="stat-num">0</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-labels">
+                                <span>Session Limit usage</span>
+                                <span><span id="progress-percent">0</span>%</span>
+                            </div>
+                            <div class="progress-bar-track">
+                                <div id="progress-fill" class="progress-bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="range-hint">Simulated context threshold (5,000 max)</span>
+                        </div>
+                        <button id="btn-clear-session" class="btn btn-secondary" onclick="clearChatHistory()">Reset Session</button>
+                    </div>
+                </aside>
+
+                <!-- Chat Area -->
+                <div class="chat-container">
+                    <div id="chat-messages" class="chat-messages-area">
+                        <!-- Welcome Message -->
+                        <div class="welcome-box" id="welcome-message">
+                            <div class="welcome-gemini-gradient"></div>
+                            <h2>Welcome to Gemini Token Studio</h2>
+                            <p>This interactive chat environment demonstrates <strong>Tokenization</strong> and <strong>Generation Limits</strong>. In LLMs, text is processed in chunks called <em>tokens</em> (roughly 4 characters each).</p>
+                            <div class="welcome-features">
+                                <div class="feature-card">
+                                    <h3>💡 Streaming Tokens</h3>
+                                    <p>Watch responses generate segment by segment in real-time, just like Gemini.</p>
+                                </div>
+                                <div class="feature-card">
+                                    <h3>🎨 Visual Tokenizer</h3>
+                                    <p>Toggle <strong>"View Tokens"</strong> on any response to highlight exactly how text is split into subwords.</p>
+                                </div>
+                                <div class="feature-card">
+                                    <h3>⚡ Limit Enforcement</h3>
+                                    <p>Lower the <em>Max Output Tokens</em> slider and ask a long question to see the response get cut off.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="chat-input-wrapper">
+                        <div id="cutoff-warning-banner" class="warning-banner hidden">
+                            <span class="warning-icon">⚠</span>
+                            <span id="warning-message-text">The response was truncated because it reached the Max Output Tokens limit.</span>
+                            <button class="warning-dismiss" onclick="dismissWarning()">Dismiss</button>
+                        </div>
+                        <form id="chat-form" class="chat-form-container" onsubmit="handleChatSubmit(event)">
+                            <textarea id="chat-input" placeholder="Type a message..." rows="1" required></textarea>
+                            <div class="chat-form-actions">
+                                <button type="button" id="btn-stop-generation" class="btn btn-secondary hidden" onclick="stopGeneration()">Stop</button>
+                                <button type="submit" id="btn-send-message" class="btn btn-primary">Send</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 2: Live Tokenizer Tool -->
+            <section id="tab-tokenizer" class="workspace-tab">
+                <div class="tokenizer-tool-layout">
+                    <div class="tokenizer-input-side">
+                        <h2>Input Text</h2>
+                        <p class="section-desc">Type or paste any text to see it tokenized live in the output area. The subword division mimics SentencePiece.</p>
+                        <textarea id="tokenizer-input-text" placeholder="Type or paste your text here..." oninput="handleTokenizerInput()"></textarea>
+                    </div>
+                    <div class="tokenizer-output-side">
+                        <h2>Tokenized Visualization</h2>
+                        
+                        <!-- Token Metrics -->
+                        <div class="tokenizer-metrics-bar">
+                            <div class="metric-item">
+                                <span class="metric-label">Tokens</span>
+                                <span id="token-count-num" class="metric-val">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Characters</span>
+                                <span id="char-count-num" class="metric-val">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Words</span>
+                                <span id="word-count-num" class="metric-val">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Chars/Token</span>
+                                <span id="chars-per-token-num" class="metric-val">0.0</span>
+                            </div>
+                        </div>
+
+                        <!-- Rendered Tokens -->
+                        <div class="tokenized-display-container">
+                            <div id="tokenized-output-view" class="tokenized-output-view">
+                                <span class="placeholder-text">Tokens will appear here as you type...</span>
+                            </div>
+                        </div>
+
+                        <!-- Token Breakdown List -->
+                        <div class="token-list-detail-section">
+                            <h3>Token ID Map</h3>
+                            <div class="token-list-scroll">
+                                <table class="token-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Token Fragment</th>
+                                            <th>Token ID</th>
+                                            <th>Highlight color</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="token-table-body">
+                                        <tr>
+                                            <td colspan="3" class="table-placeholder">No tokenized data available</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
