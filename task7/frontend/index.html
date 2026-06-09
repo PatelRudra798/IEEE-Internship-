@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A RAG-enhanced chatbot interface with document ingestion, retrieval-augmented generation, real-time tokenization, and streaming Gemini responses.">
+    <title>Gemini RAG Studio</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <div class="logo-icon"></div>
+                <h1>Gemini RAG Studio</h1>
+            </div>
+            <nav class="app-nav">
+                <button id="nav-chat-tab" class="nav-btn active" onclick="switchTab('chat')">Chat Studio</button>
+
+                <button id="nav-knowledge-tab" class="nav-btn" onclick="switchTab('knowledge')">Knowledge Base</button>
+            </nav>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="app-workspace">
+            
+            <!-- Tab 1: Chat Studio -->
+            <section id="tab-chat" class="workspace-tab workspace-tabactive">
+                <!-- Chat Area -->
+                <div class="chat-container">
+                    <div id="chat-messages" class="chat-messages-area">
+                        <!-- Welcome Message -->
+                        <div class="welcome-box" id="welcome-message">
+                            <div class="welcome-gemini-gradient"></div>
+                            <h2>Welcome to Gemini RAG Studio</h2>
+                            <p>This interactive chat environment demonstrates <strong>Retrieval-Augmented Generation (RAG)</strong>, <strong>Tokenization</strong>, and <strong>Generation Limits</strong>. Upload documents to the Knowledge Base, enable RAG, and ask questions grounded in your own data.</p>
+                            <div class="welcome-features">
+                                <div class="feature-card">
+                                    <h3>📚 RAG Pipeline</h3>
+                                    <p>Upload documents, chunk & embed them, then retrieve relevant context before generating responses.</p>
+                                </div>
+                                <div class="feature-card">
+                                    <h3>💡 Streaming Tokens</h3>
+                                    <p>Watch responses generate segment by segment in real-time, just like Gemini.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="chat-input-wrapper">
+                        <div id="chat-form" class="chat-form-container">
+    <textarea id="chat-input" placeholder="Type a message... (RAG will augment with KB context when enabled)" rows="1" required></textarea>
+    <div class="chat-form-actions">
+        <button type="button" id="btn-stop-generation" class="btn btn-secondary hidden" onclick="stopGeneration()">Stop</button>
+        <button type="button" id="btn-send-message" class="btn btn-primary" onclick="handleChatSubmit(event)">Send</button>
+    </div>
+</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 3: Knowledge Base -->
+            <section id="tab-knowledge" class="workspace-tab">
+                <div class="kb-layout">
+                    <!-- Upload / Ingest Panel -->
+                    <div class="kb-upload-panel">
+                        <h2>Add Documents</h2>
+                        <p class="section-desc">Upload text files or paste content to build your RAG knowledge base. Documents are chunked, embedded, and indexed for retrieval.</p>
+
+                        <!-- File Upload -->
+                        <div class="kb-upload-zone" id="kb-drop-zone">
+                            <div class="upload-icon">📁</div>
+                            <p>Drag & drop files here or click to upload</p>
+                            <span class="range-hint">Supports .txt, .md, .csv, .json, .py, .html, .css, .js</span>
+                            <input type="file" id="kb-file-input" multiple accept=".txt,.md,.csv,.json,.py,.html,.css,.js,.log" style="display:none;">
+                        </div>
+
+                        <div class="kb-divider">
+                            <span>OR</span>
+                        </div>
+
+                        <!-- Paste Text -->
+                        <div class="kb-paste-section">
+                            <label for="kb-paste-text">Paste text content</label>
+                            <textarea id="kb-paste-text" placeholder="Paste your document text here..." rows="6"></textarea>
+                            <div class="kb-paste-actions">
+                                <input type="text" id="kb-paste-source" placeholder="Source name (e.g., notes.txt)" class="kb-source-input">
+                                <button class="btn btn-primary" onclick="handlePasteIngest()" id="btn-ingest-paste">Ingest Text</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status / Documents Panel -->
+                    <div class="kb-status-panel">
+                        <h2>Index Status</h2>
+
+                        <!-- Metrics -->
+                        <div class="kb-metrics">
+                            <div class="metric-item">
+                                <span class="metric-label">Documents</span>
+                                <span id="kb-doc-count" class="metric-val">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Chunks</span>
+                                <span id="kb-chunk-count" class="metric-val">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Index Size</span>
+                                <span id="kb-index-size" class="metric-val">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Documents List -->
+                        <div class="kb-doc-list-section">
+                            <div class="kb-doc-list-header">
+                                <h3>Indexed Documents</h3>
+                                <button class="btn btn-secondary kb-clear-btn" onclick="handleClearIndex()" id="btn-clear-kb">Clear All</button>
+                            </div>
+                            <div class="kb-doc-list" id="kb-doc-list">
+                                <div class="kb-empty-state">
+                                    <span class="kb-empty-icon">📭</span>
+                                    <p>No documents indexed yet</p>
+                                    <span class="range-hint">Upload files or paste text to get started</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Test Retrieval -->
+                        <div class="kb-test-section">
+                            <h3>Test Retrieval</h3>
+                            <p class="section-desc">Query the index directly to see which chunks would be retrieved for a given question.</p>
+                            <div class="kb-test-input-row">
+                                <input type="text" id="kb-test-query" placeholder="Enter a test query..." class="kb-test-input">
+                                <button class="btn btn-primary" onclick="handleTestRetrieval()" id="btn-test-retrieval">Search</button>
+                            </div>
+                            <div id="kb-test-results" class="kb-test-results">
+                                <span class="placeholder-text">Results will appear here...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
