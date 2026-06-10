@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: task8-frontend
+    env: docker
+    dockerfilePath: ./frontend/Dockerfile
+    buildCommand: ''
+    startCommand: ''
+    envVars:
+      - key: ENV_VAR_EXAMPLE
+        value: your_value_here
+    healthCheckPath: "/"
+    autoDeploy: true
+    region: oregon
+    plan: free
